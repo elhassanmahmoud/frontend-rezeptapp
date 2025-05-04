@@ -67,6 +67,28 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   ])
 
+  // 🔄 Backend-API optional laden (z. B. bei App-Start oder Button)
+  async function ladeRezepteVomBackend() {
+    try {
+      const res = await fetch('https://backend-rezeptapp.onrender.com/rezepte')
+      if (!res.ok) throw new Error('Fehler beim Laden vom Backend')
+      const daten = await res.json()
+
+      // Füge Backend-Rezepte zu bestehenden hinzu (nur wenn sie nicht schon existieren)
+      daten.forEach(r => {
+        const existiert = rezepte.value.some(local => local.name === r.name)
+        if (!existiert) {
+          rezepte.value.push({
+            ...r,
+            favorit: false // Backend liefert das evtl. nicht
+          })
+        }
+      })
+    } catch (err) {
+      console.error('❌ Fehler beim Abrufen der Rezepte vom Backend:', err)
+    }
+  }
+
   function rezeptHinzufuegen(rezept) {
     rezepte.value.push({
       ...rezept,
@@ -85,6 +107,7 @@ export const useRezeptStore = defineStore('rezepte', () => {
   return {
     rezepte,
     rezeptHinzufuegen,
-    favoritToggle
+    favoritToggle,
+    ladeRezepteVomBackend
   }
 })

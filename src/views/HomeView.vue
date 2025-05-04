@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import RezeptListe from '@/components/RezeptListe.vue'
 import { useRezeptStore } from '@/stores/rezepte'
 
@@ -27,6 +27,11 @@ const rezeptStore = useRezeptStore()
 const kategorien = computed(() => {
   const alle = rezeptStore.rezepte.map(r => r.kategorie)
   return [...new Set(alle)]
+})
+
+// 🔄 Rezepte vom Backend laden beim Öffnen der Seite
+onMounted(() => {
+  rezeptStore.ladeRezepteVomBackend()
 })
 </script>
 
