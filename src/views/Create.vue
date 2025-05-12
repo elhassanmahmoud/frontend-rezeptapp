@@ -13,7 +13,8 @@ import { useRezeptStore } from '@/stores/rezepte'
 const rezeptStore = useRezeptStore()
 
 function rezeptSpeichern(rezept) {
-  rezeptStore.rezeptHinzufuegen(rezept)
+  // ✅ schickt das Rezept ans Backend
+  rezeptStore.rezeptSpeichernBeimBackend(rezept)
 }
 </script>
 

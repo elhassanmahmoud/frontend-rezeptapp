@@ -1,6 +1,6 @@
 <template>
   <section class="home">
-    <h1>Willkommen in der Rezeptwelt 🧑‍🍳</h1>
+    <h1>Willkommen in der Rezeptwelt </h1>
 
     <div class="filter-container">
       <input v-model="suche" placeholder="🔍 Suche nach Namen..." class="search" />

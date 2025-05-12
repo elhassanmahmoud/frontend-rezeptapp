@@ -67,36 +67,58 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   ])
 
-  // 🔄 Backend-API optional laden (z. B. bei App-Start oder Button)
+  // 🔁 Backend: Rezepte laden und ergänzen (ohne doppelte Namen)
   async function ladeRezepteVomBackend() {
     try {
-      const res = await fetch('https://backend-rezeptapp.onrender.com/rezepte')
+      const res = await fetch('http://localhost:3000/rezepte')
       if (!res.ok) throw new Error('Fehler beim Laden vom Backend')
       const daten = await res.json()
 
-      // Füge Backend-Rezepte zu bestehenden hinzu (nur wenn sie nicht schon existieren)
       daten.forEach(r => {
         const existiert = rezepte.value.some(local => local.name === r.name)
         if (!existiert) {
           rezepte.value.push({
             ...r,
-            favorit: false // Backend liefert das evtl. nicht
+            favorit: r.favorit ?? false
           })
         }
       })
     } catch (err) {
-      console.error('❌ Fehler beim Abrufen der Rezepte vom Backend:', err)
+      console.error('❌ Fehler beim Laden der Rezepte vom Backend:', err)
     }
   }
 
+  // 📤 Rezept ins Backend speichern (POST)
+  async function rezeptSpeichernBeimBackend(rezept) {
+    try {
+      const res = await fetch('http://localhost:3000/rezepte', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rezept)
+      })
+
+      if (!res.ok) throw new Error('Speichern fehlgeschlagen')
+
+      // Optional direkt anzeigen:
+      rezepte.value.push({
+        ...rezept,
+        favorit: false
+      })
+    } catch (err) {
+      console.error('❌ Fehler beim Speichern des Rezepts:', err)
+    }
+  }
+
+  // 📝 Lokales Hinzufügen (nur in der App, ohne DB)
   function rezeptHinzufuegen(rezept) {
     rezepte.value.push({
       ...rezept,
       id: Date.now(),
-      favorit: false // Standardwert
+      favorit: false
     })
   }
 
+  // 💖 Favorit umschalten
   function favoritToggle(id) {
     const rezept = rezepte.value.find(r => r.id === id)
     if (rezept) {
@@ -106,8 +128,9 @@ export const useRezeptStore = defineStore('rezepte', () => {
 
   return {
     rezepte,
+    ladeRezepteVomBackend,
+    rezeptSpeichernBeimBackend,
     rezeptHinzufuegen,
-    favoritToggle,
-    ladeRezepteVomBackend
+    favoritToggle
   }
 })

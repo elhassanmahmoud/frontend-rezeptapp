@@ -7,8 +7,8 @@
         <div class="nav-links">
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/about">About</RouterLink>
-          <RouterLink to="/create">📥 Rezept erstellen</RouterLink>
-          <RouterLink to="/stats">📊 Statistiken</RouterLink> <!-- ✅ NEU -->
+          <RouterLink to="/create"> Rezept erstellen</RouterLink>
+          <RouterLink to="/stats"> Statistiken</RouterLink> <!-- ✅ NEU -->
         </div>
 
         <div class="auth-links">
