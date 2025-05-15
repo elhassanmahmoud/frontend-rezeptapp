@@ -1,7 +1,7 @@
 <!-- src/views/HomeView.vue -->
 <template>
   <section class="home">
-    <h1>Willkommen in der Rezeptwelt 🧑‍🍳</h1>
+    <h1>Willkommen in der Rezeptwelt </h1>
     <input v-model="suche" placeholder="Suche nach Namen oder Kategorie..." class="search" />
     <RezeptListe :filter="suche" />
   </section>
