@@ -1,17 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useRezeptStore = defineStore('rezepte', () => {
-  const rezepte = ref([]) //  Nur Backend-Daten, keine Dummy-Rezepte
+// 🧠 Zugriff auf API-URL aus .env
+const API_URL = import.meta.env.VITE_API_URL
 
-  //  Lade alle Rezepte vom Backend (ersetzt Liste vollständig)
+export const useRezeptStore = defineStore('rezepte', () => {
+  const rezepte = ref([])
+
+  // 🔄 Rezepte vom Backend laden
   async function ladeRezepteVomBackend() {
     try {
-      const res = await fetch('https://backend-rezeptapp.onrender.com/rezepte')
+      const res = await fetch(`${API_URL}/rezepte`)
       if (!res.ok) throw new Error('Fehler beim Laden vom Backend')
       const daten = await res.json()
-
-      // Ersetze lokale Liste vollständig
       rezepte.value = daten.map(r => ({
         ...r,
         favorit: r.favorit ?? false
@@ -21,21 +22,20 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   }
 
-  //  Speichert Rezept dauerhaft in der Datenbank
+  // 💾 Neues Rezept speichern
   async function rezeptSpeichernBeimBackend(rezept) {
     try {
-      const res = await fetch('https://backend-rezeptapp.onrender.com/rezepte', {
+      const res = await fetch(`${API_URL}/rezepte`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rezept)
       })
 
       if (!res.ok) throw new Error('Speichern fehlgeschlagen')
-
       const result = await res.json()
       console.log('✅ Rezept erfolgreich gespeichert:', result)
 
-      // Neues Rezept nach erfolgreicher Speicherung anhängen
+      // Direkt lokal anhängen
       rezepte.value.push({
         ...rezept,
         favorit: false
@@ -45,12 +45,10 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   }
 
-  //  Favoritenstatus umschalten
+  // ⭐ Favoritenstatus umschalten
   function favoritToggle(id) {
     const rezept = rezepte.value.find(r => r.id === id)
-    if (rezept) {
-      rezept.favorit = !rezept.favorit
-    }
+    if (rezept) rezept.favorit = !rezept.favorit
   }
 
   return {
