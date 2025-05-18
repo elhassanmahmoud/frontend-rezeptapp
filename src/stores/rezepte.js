@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-// ur Basis-URL
+// ur Basis-UR
 const API_URL = 'http://localhost:3000'
 console.log('✅ Fallback API URL:', API_URL)
 
