@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 // ur Basis-UR
-const API_URL = 'http://localhost:3000'
-console.log('✅ Fallback API URL:', API_URL)
+const API_URL = import.meta.env.VITE_API_URL
+console.log('🌐 API URL:', API_URL)
 
 export const useRezeptStore = defineStore('rezepte', () => {
   const rezepte = ref([])
