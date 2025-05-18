@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-// 🧠 Zugriff auf API-URL aus .env
-const API_URL = import.meta.env.VITE_API_URL
+// ur Basis-URL
+const API_URL = 'http://localhost:3000'
+console.log('✅ Fallback API URL:', API_URL)
 
 export const useRezeptStore = defineStore('rezepte', () => {
   const rezepte = ref([])
@@ -10,7 +11,7 @@ export const useRezeptStore = defineStore('rezepte', () => {
   // 🔄 Rezepte vom Backend laden
   async function ladeRezepteVomBackend() {
     try {
-      const res = await fetch(`${API_URL}/rezepte`)
+      const res = await fetch(`${API_URL}/rezepte`) // ✅ genau 1x "rezepte"
       if (!res.ok) throw new Error('Fehler beim Laden vom Backend')
       const daten = await res.json()
       rezepte.value = daten.map(r => ({
@@ -35,7 +36,6 @@ export const useRezeptStore = defineStore('rezepte', () => {
       const result = await res.json()
       console.log('✅ Rezept erfolgreich gespeichert:', result)
 
-      // Direkt lokal anhängen
       rezepte.value.push({
         ...rezept,
         favorit: false

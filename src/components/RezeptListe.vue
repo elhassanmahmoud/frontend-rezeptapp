@@ -10,24 +10,30 @@
       <button @click="exportiereAlsPDF">📄 Als PDF exportieren</button>
     </div>
 
+    <!-- Debug: Anzahl -->
+    <p>Anzahl gefilterter Rezepte: {{ gefiltert.length }}</p>
+
+    <!-- Wenn keine Rezepte gefunden -->
+    <p v-if="gefiltert.length === 0">🚫 Keine passenden Rezepte gefunden.</p>
+
     <div v-for="r in gefiltert" :key="r.id" class="card">
       <img :src="`/assets/${r.bild}`" :alt="r.name" />
       <h3>{{ r.name }} <small>({{ r.kategorie }})</small></h3>
       <p>{{ r.beschreibung }}</p>
 
       <!-- Zutatenliste -->
-      <ul class="zutaten" v-if="r.zutaten">
+      <ul class="zutaten" v-if="Array.isArray(r.zutaten)">
         <li v-for="zutat in r.zutaten" :key="zutat.name">
           🧂 {{ zutat.menge }} {{ zutat.name }}
         </li>
       </ul>
 
       <!-- Nährwerte -->
-      <div class="naehrwerte" v-if="r.naehrwerte">
-        📦 Kalorien: {{ r.naehrwerte.kalorien }} kcal |
-        Eiweiß: {{ r.naehrwerte.eiweiss }} g |
-        Fett: {{ r.naehrwerte.fett }} g |
-        Kohlenhydrate: {{ r.naehrwerte.kohlenhydrate }} g
+      <div class="naehrwerte" v-if="r.naehrwerte && typeof r.naehrwerte === 'object'">
+        📦 Kalorien: {{ r.naehrwerte.kalorien || '?' }} kcal |
+        Eiweiß: {{ r.naehrwerte.eiweiss || '?' }} g |
+        Fett: {{ r.naehrwerte.fett || '?' }} g |
+        Kohlenhydrate: {{ r.naehrwerte.kohlenhydrate || '?' }} g
       </div>
 
       <button
@@ -62,8 +68,8 @@ const gefiltert = computed(() => {
 
   return rezeptStore.rezepte.filter(r => {
     const passtZurSuche =
-      r.name.toLowerCase().includes(suchbegriff) ||
-      r.kategorie.toLowerCase().includes(suchbegriff)
+      (r.name?.toLowerCase().includes(suchbegriff) || false) ||
+      (r.kategorie?.toLowerCase().includes(suchbegriff) || false)
 
     const passtZurKategorie = !kategorie || r.kategorie === kategorie
     const istFavorit = !zeigeNurFavoriten.value || r.favorit
@@ -81,7 +87,6 @@ async function exportiereAlsPDF() {
   const benutzer = userStore.user?.username || 'Unbekannt'
   const datum = new Date().toLocaleDateString()
 
-  // Logo
   const logoUrl = '/assets/logo.jpg'
   try {
     const logo = await toBase64(logoUrl)
@@ -90,12 +95,10 @@ async function exportiereAlsPDF() {
     console.warn('Logo konnte nicht geladen werden:', logoUrl)
   }
 
-  // Titel
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(20)
   doc.text('Meine Rezepte', 45, 22)
 
-  // Benutzername & Datum oben rechts
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.text(`Benutzer: ${benutzer}`, 150, 15)
@@ -122,22 +125,19 @@ async function exportiereAlsPDF() {
     doc.setTextColor(55, 55, 55)
     doc.text(doc.splitTextToSize(r.beschreibung, 120), 15, y + 20)
 
-    // Zutaten
     if (r.zutaten?.length) {
-      let zutatenText = r.zutaten.map(z => `- ${z.menge} ${z.name}`).join('\n')
+      const zutatenText = r.zutaten.map(z => `- ${z.menge} ${z.name}`).join('\n')
       doc.text(doc.splitTextToSize(`Zutaten:\n${zutatenText}`, 120), 15, y + 32)
     }
 
-    // Nährwerte
     if (r.naehrwerte) {
       const n = r.naehrwerte
-      const naehrwertText = `Kalorien: ${n.kalorien} kcal | Eiweiß: ${n.eiweiss} g | Fett: ${n.fett} g | Kohlenhydrate: ${n.kohlenhydrate} g`
+      const naehrwertText = `Kalorien: ${n.kalorien || '?'} kcal | Eiweiß: ${n.eiweiss || '?'} g | Fett: ${n.fett || '?'} g | Kohlenhydrate: ${n.kohlenhydrate || '?'} g`
       doc.setFontSize(10)
       doc.setTextColor(80, 80, 80)
       doc.text(naehrwertText, 15, y + 60)
     }
 
-    // Bild
     try {
       const imgData = await toBase64(`/assets/${r.bild}`)
       doc.addImage(imgData, 'JPEG', 150, y + 8, 45, 30)
