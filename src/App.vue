@@ -13,7 +13,7 @@
 
         <div class="auth-links">
           <template v-if="userStore.user">
-            👋 Hallo, {{ userStore.user.username }}
+             Hallo, {{ userStore.user.username }}
             <button @click="logout" class="logout-btn">Logout</button>
           </template>
           <template v-else>

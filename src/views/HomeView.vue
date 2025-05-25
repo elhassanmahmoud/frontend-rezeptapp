@@ -29,7 +29,7 @@ const kategorien = computed(() => {
   return [...new Set(alle)]
 })
 
-// 🔄 Rezepte vom Backend laden beim Öffnen der Seite
+// 🔄 Rezepte vom Backend laden beim Öffnen der Seite - backend m3
 onMounted(() => {
   rezeptStore.ladeRezepteVomBackend()
 })

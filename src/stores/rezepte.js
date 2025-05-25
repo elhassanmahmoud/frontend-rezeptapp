@@ -8,7 +8,7 @@ console.log('🌐 API URL:', API_URL)
 export const useRezeptStore = defineStore('rezepte', () => {
   const rezepte = ref([])
 
-  // 🔄 Rezepte vom Backend laden
+  // 🔄 Rezepte vom Backend laden m3
   async function ladeRezepteVomBackend() {
     try {
       const res = await fetch(`${API_URL}/rezepte`) // ✅ genau 1x "rezepte"
@@ -23,7 +23,7 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   }
 
-  // 💾 Neues Rezept speichern
+  // 💾 Neues Rezept speichern m4 punkt 3 
   async function rezeptSpeichernBeimBackend(rezept) {
     try {
       const res = await fetch(`${API_URL}/rezepte`, {
