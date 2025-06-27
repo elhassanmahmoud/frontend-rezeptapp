@@ -1,17 +1,16 @@
+// src/stores/rezepte.js
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-// ur Basis-UR
 const API_URL = import.meta.env.VITE_API_URL
-console.log('🌐 API URL:', API_URL)
 
 export const useRezeptStore = defineStore('rezepte', () => {
   const rezepte = ref([])
 
-  // 🔄 Rezepte vom Backend laden m3
+  // 🔄 Rezepte vom Backend laden
   async function ladeRezepteVomBackend() {
     try {
-      const res = await fetch(`${API_URL}/rezepte`) // ✅ genau 1x "rezepte"
+      const res = await fetch(`${API_URL}/rezepte`)
       if (!res.ok) throw new Error('Fehler beim Laden vom Backend')
       const daten = await res.json()
       rezepte.value = daten.map(r => ({
@@ -23,7 +22,7 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   }
 
-  // 💾 Neues Rezept speichern m4 punkt 3
+  // 💾 Neues Rezept speichern (mit Übernahme der Server-Antwort)
   async function rezeptSpeichernBeimBackend(rezept) {
     try {
       const res = await fetch(`${API_URL}/rezepte`, {
@@ -31,14 +30,16 @@ export const useRezeptStore = defineStore('rezepte', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rezept)
       })
-
       if (!res.ok) throw new Error('Speichern fehlgeschlagen')
-      const result = await res.json()
-      console.log('✅ Rezept erfolgreich gespeichert:', result)
 
+      // Das komplette, gespeicherte Objekt abholen (inkl. id)
+      const saved = await res.json()
+      console.log('✅ Gespeichertes Rezept vom Server:', saved)
+
+      // Genau dieses Objekt in den Store übernehmen
       rezepte.value.push({
-        ...rezept,
-        favorit: false
+        ...saved,
+        favorit: saved.favorit ?? false
       })
     } catch (err) {
       console.error('❌ Fehler beim Speichern des Rezepts:', err)

@@ -15,9 +15,12 @@
     <div v-for="(z, index) in zutaten" :key="index" class="zutat-row">
       <input v-model="z.menge" placeholder="Menge" />
       <input v-model="z.name" placeholder="Zutat" />
+      <input v-model="z.kategorie" placeholder="Zutat-Kategorie" />
+      <input v-model="z.symbol" placeholder="Symbol (🍅)" />
+      <input v-model="z.kochanleitung" placeholder="Kochanleitung" />
       <button type="button" @click="zutaten.splice(index, 1)">❌</button>
     </div>
-    <button type="button" @click="zutaten.push({ name: '', menge: '' })">➕ Zutat</button>
+    <button type="button" @click="neueZutat()">➕ Zutat</button>
 
     <h4>Nährwerte:</h4>
     <input type="number" v-model.number="naehrwerte.kalorien" placeholder="Kalorien (kcal)" />
@@ -38,7 +41,10 @@ const kategorie = ref('')
 const bild = ref('')
 const beschreibung = ref('')
 
-const zutaten = ref([{ name: '', menge: '' }])
+const zutaten = ref([
+  { name: '', menge: '', kategorie: '', symbol: '', kochanleitung: '' }
+])
+
 const naehrwerte = ref({
   kalorien: null,
   eiweiss: null,
@@ -46,13 +52,23 @@ const naehrwerte = ref({
   kohlenhydrate: null
 })
 
+function neueZutat() {
+  zutaten.value.push({
+    name: '',
+    menge: '',
+    kategorie: '',
+    symbol: '',
+    kochanleitung: ''
+  })
+}
+
 function absenden() {
   emit('neues-rezept', {
     name: name.value,
     kategorie: kategorie.value,
     bild: bild.value || 'standard.jpg',
     beschreibung: beschreibung.value,
-    zutaten: zutaten.value.filter(z => z.name && z.menge),
+    zutaten: zutaten.value.filter(z => z.name && z.menge), // prüft auf Eingabe
     naehrwerte: naehrwerte.value
   })
 
@@ -61,7 +77,9 @@ function absenden() {
   kategorie.value = ''
   bild.value = ''
   beschreibung.value = ''
-  zutaten.value = [{ name: '', menge: '' }]
+  zutaten.value = [
+    { name: '', menge: '', kategorie: '', symbol: '', kochanleitung: '' }
+  ]
   naehrwerte.value = { kalorien: null, eiweiss: null, fett: null, kohlenhydrate: null }
 }
 </script>
@@ -83,6 +101,7 @@ input, textarea {
 
 .zutat-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
   margin-bottom: 0.5rem;

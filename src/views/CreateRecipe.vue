@@ -6,15 +6,17 @@
       <input v-model="kategorie" type="text" placeholder="Kategorie" required />
       <input v-model="bild" type="text" placeholder="Bilddateiname (z. B. pizza.jpg)" />
       <textarea v-model="beschreibung" placeholder="Beschreibung" required></textarea>
-      <button type="submit">Speichern</button>
+      <button type="submit">✅ Speichern & zur Startseite</button>
     </form>
   </section>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useRezeptStore } from '@/stores/rezepte'
 
+const router = useRouter()
 const rezeptStore = useRezeptStore()
 
 const name = ref('')
@@ -22,18 +24,24 @@ const kategorie = ref('')
 const bild = ref('')
 const beschreibung = ref('')
 
-function rezeptSpeichern() {
-  rezeptStore.rezeptHinzufuegen({
+async function rezeptSpeichern() {
+  await rezeptStore.rezeptSpeichernBeimBackend({
     name: name.value,
     kategorie: kategorie.value,
     bild: bild.value || 'standard.jpg',
-    beschreibung: beschreibung.value
+    beschreibung: beschreibung.value,
+    zutaten: [], // ggf. noch erweitern, falls du ein Zutatenformular einfügst
+    naehrwerte: {}
   })
 
+  // Felder zurücksetzen
   name.value = ''
   kategorie.value = ''
   bild.value = ''
   beschreibung.value = ''
+
+  // 🔁 Weiterleitung zur Startseite
+  router.push('/')
 }
 </script>
 

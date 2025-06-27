@@ -14,7 +14,7 @@
     <p v-if="gefiltert.length === 0">🚫 Keine passenden Rezepte gefunden.</p>
 
     <div v-for="r in gefiltert" :key="r.id" class="card">
-      <img :src="`/assets/${r.bild}`" :alt="r.name" />
+      <img :src="r.bild ? `/assets/${r.bild}` : '/assets/keinbild.jpg'" :alt="r.name" />
       <h3>{{ r.name }} <small>({{ r.kategorie }})</small></h3>
       <p>{{ r.beschreibung }}</p>
 

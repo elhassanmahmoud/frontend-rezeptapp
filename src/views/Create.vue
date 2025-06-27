@@ -1,7 +1,6 @@
-<!-- src/views/Create.vue -->
 <template>
   <section class="create-recipe">
-    <h1> Neues Rezept erstellen</h1>
+    <h1>📥 Neues Rezept erstellen</h1>
     <RezeptFormular @neues-rezept="rezeptSpeichern" />
   </section>
 </template>
@@ -13,8 +12,16 @@ import { useRezeptStore } from '@/stores/rezepte'
 const rezeptStore = useRezeptStore()
 
 function rezeptSpeichern(rezept) {
-  // ✅ schickt das Rezept ans Backend
-  rezeptStore.rezeptSpeichernBeimBackend(rezept)
+  console.log('📦 Rezept empfangen vom Formular:', rezept)
+
+  // Standardwerte absichern
+  const rezeptMitFallbacks = {
+    ...rezept,
+    zutaten: rezept.zutaten || [],
+    naehrwerte: rezept.naehrwerte || {}
+  }
+
+  rezeptStore.rezeptSpeichernBeimBackend(rezeptMitFallbacks)
 }
 </script>
 
