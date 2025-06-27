@@ -1,10 +1,18 @@
+/* ===============================
+   Rezept-App UI Design (Farben ans Logo angepasst)
+   =============================== */
+
 :root {
-  --color-bg: #ffffff;
-  --color-soft: #f3f3f3;
-  --color-accent: #4CAF50;
-  --color-text: #1f1f1f;
-  --color-border: #e0e0e0;
+  --color-bg: #fdf8f2;
+  --color-soft: #fffaf3;
+  --color-accent: #3b5f47; /* dunkles Grün aus dem Logo */
+  --color-accent-light: #fceecf; /* heller Creme-Ton aus Hintergrund des Logos */
+  --color-accent-dark: #2f4d3b;
+  --color-text: #2e2e2e;
+  --color-border: #e2dccc;
+  --color-danger: #e56a54;
   --card-radius: 16px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 body {
@@ -12,29 +20,134 @@ body {
   font-family: "Helvetica Neue", sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
+  line-height: 1.6;
 }
 
+/* Navigation */
 nav {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
-  padding: 1.5rem;
-  background-color: var(--color-soft);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.2rem 2rem;
+  background-color: var(--color-accent-light);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 nav a {
   text-decoration: none;
   font-weight: 600;
   color: var(--color-text);
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
 }
 
 nav a.router-link-exact-active {
   color: var(--color-accent);
 }
 
+/* Hauptbereich */
 main {
   padding: 2rem;
   max-width: 960px;
   margin: auto;
+}
+
+/* Karten-Stil */
+.card {
+  background-color: var(--color-soft);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  background-color: #fffdf7;
+}
+
+/* Formulare */
+input, select, textarea {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-dark);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #cc4a39;
+  transform: translateY(-1px);
+}
+
+/* Statistik / Charts */
+.chart-container {
+  margin-top: 2rem;
+  background: var(--color-soft);
+  padding: 1.5rem;
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+    border-radius: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .logo:hover {
+    transform: scale(1.05);
+  }
 }

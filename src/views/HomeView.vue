@@ -24,10 +24,12 @@ const suche = ref('')
 const kategorieFilter = ref('')
 const rezeptStore = useRezeptStore()
 
-const kategorien = computed(() => {
-  const alle = rezeptStore.rezepte.map(r => r.kategorie)
-  return [...new Set(alle)]
-})
+const kategorien = [
+  'Italienisch',
+  'Asiatisch',
+  'Orientalisch',
+  'Vegetarisch'
+]
 
 // 🔄 Rezepte vom Backend laden beim Öffnen der Seite - backend m3
 onMounted(() => {

@@ -1,7 +1,7 @@
 <!-- src/views/Create.vue -->
 <template>
   <section class="create-recipe">
-    <h1>📥 Neues Rezept erstellen</h1>
+    <h1> Neues Rezept erstellen</h1>
     <RezeptFormular @neues-rezept="rezeptSpeichern" />
   </section>
 </template>

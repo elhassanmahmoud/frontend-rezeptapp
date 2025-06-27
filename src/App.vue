@@ -5,15 +5,17 @@
 
       <nav class="main-nav">
         <div class="nav-links">
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-          <RouterLink to="/create"> Rezept erstellen</RouterLink>
-          <RouterLink to="/stats"> Statistiken</RouterLink> <!-- ✅ NEU -->
+          <RouterLink to="/" v-if="!userStore.user">Start</RouterLink>
+          <template v-else>
+            <RouterLink to="/home">Home</RouterLink>
+            <RouterLink to="/create">Rezept erstellen</RouterLink>
+            <RouterLink to="/stats">Statistiken</RouterLink>
+          </template>
         </div>
 
         <div class="auth-links">
           <template v-if="userStore.user">
-             Hallo, {{ userStore.user.username }}
+            Hallo, {{ userStore.user.username }}
             <button @click="logout" class="logout-btn">Logout</button>
           </template>
           <template v-else>
@@ -39,7 +41,7 @@ const router = useRouter()
 
 function logout() {
   userStore.logout()
-  router.push('/')
+  router.push('/') // Zur öffentlichen Startseite
 }
 </script>
 
@@ -74,8 +76,8 @@ function logout() {
 
 /* Logo Animation (Bounce) */
 .logo-bounce {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   animation: bounce 3s infinite ease-in-out;
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

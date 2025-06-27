@@ -1,7 +1,13 @@
 <template>
   <form @submit.prevent="absenden" class="formular">
     <input v-model="name" placeholder="Name" required />
-    <input v-model="kategorie" placeholder="Kategorie" required />
+    <select v-model="kategorie" required>
+      <option disabled value="">Kategorie wählen</option>
+      <option>Italienisch</option>
+      <option>Asiatisch</option>
+      <option>Orientalisch</option>
+      <option>Vegetarisch</option>
+    </select>
     <input v-model="bild" placeholder="Bilddateiname (z. B. pizza.jpg)" />
     <textarea v-model="beschreibung" placeholder="Beschreibung" required></textarea>
 

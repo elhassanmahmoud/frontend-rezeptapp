@@ -1,30 +1,49 @@
-<!-- src/views/HomeView.vue -->
 <template>
   <section class="home">
     <h1>Willkommen in der Rezeptwelt </h1>
-    <input v-model="suche" placeholder="Suche nach Namen oder Kategorie..." class="search" />
-    <RezeptListe :filter="suche" />
+
+    <div class="filter-container">
+      <input v-model="suche" placeholder="🔍 Suche nach Namen..." class="search" />
+      <select v-model="kategorieFilter" class="filter-dropdown">
+        <option value="">Alle Kategorien</option>
+        <option v-for="k in kategorien" :key="k" :value="k">{{ k }}</option>
+      </select>
+    </div>
+
+    <p>Anzahl gefilterter Rezepte: {{ gefilterteRezepte.length }}</p>
+
+    <RezeptListe :rezepte="gefilterteRezepte" />
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import RezeptListe from '@/components/RezeptListe.vue'
+import { useRezeptStore } from '@/stores/rezepte'
 
+const rezeptStore = useRezeptStore()
 const suche = ref('')
-</script>
+const kategorieFilter = ref('')
 
-<style scoped>
-.home {
-  padding: 2rem;
-  max-width: 960px;
-  margin: auto;
-}
-.search {
-  padding: 10px 15px;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  width: 100%;
-  margin: 1rem 0 2rem;
-}
-</style>
+// ✅ Feste Liste von Kategorien statt dynamisch
+const kategorien = [
+  'Italienisch',
+  'Asiatisch',
+  'Orientalisch',
+  'Vegetarisch'
+]
+
+// Gefilterte Rezepte
+const gefilterteRezepte = computed(() => {
+  return rezeptStore.rezepte.filter(r => {
+    const passtSuche = r.name.toLowerCase().includes(suche.value.toLowerCase())
+    const passtKategorie = !kategorieFilter.value || r.kategorie === kategorieFilter.value
+    return passtSuche && passtKategorie
+  })
+})
+
+// Rezepte laden beim Start
+onMounted(() => {
+  rezeptStore.ladeRezepteVomBackend()
+})
+</script>

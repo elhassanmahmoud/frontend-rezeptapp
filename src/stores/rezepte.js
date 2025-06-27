@@ -23,7 +23,7 @@ export const useRezeptStore = defineStore('rezepte', () => {
     }
   }
 
-  // 💾 Neues Rezept speichern m4 punkt 3 
+  // 💾 Neues Rezept speichern m4 punkt 3
   async function rezeptSpeichernBeimBackend(rezept) {
     try {
       const res = await fetch(`${API_URL}/rezepte`, {

@@ -1,11 +1,11 @@
 <template>
   <section class="stats">
-    <h1>📊 Koch-Statistiken</h1>
+    <h1> Koch-Statistiken</h1>
 
     <ul class="stat-list">
-      <li>📝 Anzahl aller Rezepte: {{ alle.length }}</li>
-      <li>💖 Favoriten: {{ favoriten.length }}</li>
-      <li>📂 Kategorien:
+      <li> Anzahl aller Rezepte: {{ alle.length }}</li>
+      <li> Favoriten: {{ favoriten.length }}</li>
+      <li> Kategorien:
         <ul>
           <li v-for="(anzahl, kat) in kategorien" :key="kat">
             {{ kat }}: {{ anzahl }}
