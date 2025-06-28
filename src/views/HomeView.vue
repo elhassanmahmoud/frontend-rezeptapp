@@ -1,23 +1,9 @@
-<!-- src/views/HomeView.vue -->
 <template>
   <section class="home">
     <h1>Willkommen in der Rezeptwelt</h1>
 
-    <!-- 1. Button zum Ein-/Ausblenden des Formulars -->
-    <div class="create-toggle">
-      <button @click="zeigeFormular = !zeigeFormular">
-        {{ zeigeFormular ? '✖️ Formular verbergen' : '➕ Neues Rezept erstellen' }}
-      </button>
-    </div>
-
-    <!-- 2. Formular einbinden -->
-    <RezeptFormular
-      v-if="zeigeFormular"
-      @neues-rezept="onRezeptErstellen"
-    />
-
-    <!-- 3. Filter-Bereich bleibt unverändert -->
-    <div class="filter-container" v-if="!zeigeFormular">
+    <!-- 🔍 Filter-Bereich -->
+    <div class="filter-container">
       <input
         v-model="suche"
         placeholder="🔍 Suche nach Namen..."
@@ -29,79 +15,48 @@
       </select>
     </div>
 
-    <!-- 4. Ergebnis-Liste -->
-    <p v-if="!zeigeFormular">
-      Anzahl gefilterter Rezepte: {{ gefilterteRezepte.length }}
-    </p>
-    <RezeptListe
-      v-if="!zeigeFormular"
-      :rezepte="gefilterteRezepte"
-    />
+    <!-- ✅ Rezeptliste zeigt die Anzahl selbst -->
+    <RezeptListe :rezepte="gefilterteRezepte" />
   </section>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRezeptStore } from '@/stores/rezepte'
 import RezeptListe from '@/components/RezeptListe.vue'
-import RezeptFormular from '@/components/RezeptFormular.vue'
+import { useRezeptStore } from '@/stores/rezepte'
 
-const rezeptStore     = useRezeptStore()
-const zeigeFormular  = ref(false)
-const suche          = ref('')
-const kategorieFilter= ref('')
+const rezeptStore = useRezeptStore()
+const suche = ref('')
+const kategorieFilter = ref('')
 
-// Feste Kategorien-Liste
 const kategorien = [
   'Italienisch',
   'Asiatisch',
   'Orientalisch',
-  'Vegetarisch'
+  'Vegetarisch',
+  'Mexikanisch',
+  'Indisch',
+  'Französisch',
+  'Vegan',
+  'Glutenfrei',
+  'Suppe',
+  'Dessert'
 ]
-
-// beim Mount Rezepte vom Backend laden
-onMounted(() => {
-  rezeptStore.ladeRezepteVomBackend()
-})
 
 const gefilterteRezepte = computed(() =>
   rezeptStore.rezepte.filter(r => {
-    const passtSuche      = r.name.toLowerCase().includes(suche.value.toLowerCase())
-    const passtKategorie  = !kategorieFilter.value || r.kategorie === kategorieFilter.value
+    const passtSuche = r.name?.toLowerCase().includes(suche.value.toLowerCase()) || false
+    const passtKategorie = !kategorieFilter.value || r.kategorie === kategorieFilter.value
     return passtSuche && passtKategorie
   })
 )
 
-// Handler, wenn Formular ein neues Rezept liefert
-async function onRezeptErstellen(neuesRezept) {
-  // Rezept in Backend speichern
-  await rezeptStore.rezeptSpeichernBeimBackend(neuesRezept)
-
-  // ✅ Danach komplette Liste neu laden, um Datenkonsistenz sicherzustellen
-  await rezeptStore.ladeRezepteVomBackend()
-
-  // Formular schließen
-  zeigeFormular.value = false
-
-  // Filter zurücksetzen
-  suche.value = ''
-  kategorieFilter.value = ''
-}
+onMounted(() => {
+  rezeptStore.ladeRezepteVomBackend()
+})
 </script>
 
 <style scoped>
-.create-toggle {
-  margin: 1rem 0;
-}
-.create-toggle button {
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
 .filter-container {
   display: flex;
   gap: 1rem;

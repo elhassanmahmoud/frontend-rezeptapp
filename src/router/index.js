@@ -6,11 +6,12 @@ import CreateView from '../views/Create.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import StatsView from '../views/StatsView.vue'
+import BearbeitenView from '../views/BearbeitenView.vue' // ✅ NEU
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'welcome', component: WelcomeView }, // öffentliche Startseite
+    { path: '/', name: 'welcome', component: WelcomeView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/register', name: 'register', component: RegisterView },
     {
@@ -29,6 +30,12 @@ const router = createRouter({
       path: '/stats',
       name: 'stats',
       component: StatsView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/bearbeiten/:id',          // ✅ Bearbeitungsseite mit ID
+      name: 'bearbeiten',
+      component: BearbeitenView,
       meta: { requiresAuth: true }
     }
   ]

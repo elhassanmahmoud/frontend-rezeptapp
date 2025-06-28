@@ -1,59 +1,88 @@
 <template>
   <form @submit.prevent="absenden" class="formular">
-    <input v-model="name" placeholder="Name" required />
-    <select v-model="kategorie" required>
+    <h2>{{ istBearbeiten ? 'Rezept bearbeiten' : 'Neues Rezept erstellen' }}</h2>
+
+    <input v-model="form.name" placeholder="Name" required />
+    <select v-model="form.kategorie" required>
       <option disabled value="">Kategorie wählen</option>
       <option>Italienisch</option>
       <option>Asiatisch</option>
       <option>Orientalisch</option>
       <option>Vegetarisch</option>
     </select>
-    <input v-model="bild" placeholder="Bilddateiname (z. B. pizza.jpg)" />
-    <textarea v-model="beschreibung" placeholder="Beschreibung" required></textarea>
+    <input v-model="form.bild" placeholder="Bilddateiname (z. B. pizza.jpg)" />
+    <textarea v-model="form.beschreibung" placeholder="Beschreibung" required></textarea>
 
     <h4>Zutaten:</h4>
-    <div v-for="(z, index) in zutaten" :key="index" class="zutat-row">
+    <div v-for="(z, index) in form.zutaten" :key="index" class="zutat-row">
       <input v-model="z.menge" placeholder="Menge" />
       <input v-model="z.name" placeholder="Zutat" />
       <input v-model="z.kategorie" placeholder="Zutat-Kategorie" />
       <input v-model="z.symbol" placeholder="Symbol (🍅)" />
       <input v-model="z.kochanleitung" placeholder="Kochanleitung" />
-      <button type="button" @click="zutaten.splice(index, 1)">❌</button>
+      <button type="button" @click="form.zutaten.splice(index, 1)">❌</button>
     </div>
     <button type="button" @click="neueZutat()">➕ Zutat</button>
 
     <h4>Nährwerte:</h4>
-    <input type="number" v-model.number="naehrwerte.kalorien" placeholder="Kalorien (kcal)" />
-    <input type="number" v-model.number="naehrwerte.eiweiss" placeholder="Eiweiß (g)" />
-    <input type="number" v-model.number="naehrwerte.fett" placeholder="Fett (g)" />
-    <input type="number" v-model.number="naehrwerte.kohlenhydrate" placeholder="Kohlenhydrate (g)" />
+    <input type="number" v-model.number="form.naehrwerte.kalorien" placeholder="Kalorien (kcal)" />
+    <input type="number" v-model.number="form.naehrwerte.eiweiss" placeholder="Eiweiß (g)" />
+    <input type="number" v-model.number="form.naehrwerte.fett" placeholder="Fett (g)" />
+    <input type="number" v-model.number="form.naehrwerte.kohlenhydrate" placeholder="Kohlenhydrate (g)" />
 
-    <button>✅ Speichern</button>
+    <div class="form-buttons">
+      <button type="submit">✅ Speichern</button>
+      <button type="button" @click="$emit('abbrechen')">❌ Abbrechen</button>
+    </div>
   </form>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const emit = defineEmits(['neues-rezept'])
+import { ref, watch } from 'vue'
+import axios from 'axios'
+import { useRezeptStore } from '@/stores/rezepte'
 
-const name = ref('')
-const kategorie = ref('')
-const bild = ref('')
-const beschreibung = ref('')
+const rezeptStore = useRezeptStore()
 
-const zutaten = ref([
-  { name: '', menge: '', kategorie: '', symbol: '', kochanleitung: '' }
-])
-
-const naehrwerte = ref({
-  kalorien: null,
-  eiweiss: null,
-  fett: null,
-  kohlenhydrate: null
+const props = defineProps({
+  rezept: Object // optional
 })
 
+const emit = defineEmits(['abbrechen', 'gespeichert'])
+
+const form = ref({
+  name: '',
+  kategorie: '',
+  bild: '',
+  beschreibung: '',
+  favorit: false,
+  zutaten: [
+    { name: '', menge: '', kategorie: '', symbol: '', kochanleitung: '' }
+  ],
+  naehrwerte: {
+    kalorien: null,
+    eiweiss: null,
+    fett: null,
+    kohlenhydrate: null
+  }
+})
+
+// Bearbeitungsmodus erkennen
+const istBearbeiten = ref(false)
+
+watch(
+  () => props.rezept,
+  (neues) => {
+    if (neues) {
+      form.value = JSON.parse(JSON.stringify(neues))
+      istBearbeiten.value = true
+    }
+  },
+  { immediate: true }
+)
+
 function neueZutat() {
-  zutaten.value.push({
+  form.value.zutaten.push({
     name: '',
     menge: '',
     kategorie: '',
@@ -62,25 +91,28 @@ function neueZutat() {
   })
 }
 
-function absenden() {
-  emit('neues-rezept', {
-    name: name.value,
-    kategorie: kategorie.value,
-    bild: bild.value || 'standard.jpg',
-    beschreibung: beschreibung.value,
-    zutaten: zutaten.value.filter(z => z.name && z.menge), // prüft auf Eingabe
-    naehrwerte: naehrwerte.value
-  })
+async function absenden() {
+  const rezept = {
+    ...form.value,
+    bild: form.value.bild || 'standard.jpg',
+    zutaten: form.value.zutaten.filter(z => z.name && z.menge)
+  }
 
-  // Felder zurücksetzen
-  name.value = ''
-  kategorie.value = ''
-  bild.value = ''
-  beschreibung.value = ''
-  zutaten.value = [
-    { name: '', menge: '', kategorie: '', symbol: '', kochanleitung: '' }
-  ]
-  naehrwerte.value = { kalorien: null, eiweiss: null, fett: null, kohlenhydrate: null }
+  try {
+    if (istBearbeiten.value) {
+      await axios.put(`http://localhost:8080/rezepte/${rezept.id}`, rezept)
+      rezeptStore.rezepte = rezeptStore.rezepte.map(r => r.id === rezept.id ? rezept : r)
+      alert('✅ Rezept aktualisiert!')
+    } else {
+      const res = await axios.post('http://localhost:8080/rezepte', rezept)
+      rezeptStore.rezepte.push(res.data)
+      alert('✅ Rezept erstellt!')
+    }
+    emit('gespeichert')
+  } catch (error) {
+    console.error('❌ Fehler:', error.response?.data || error.message)
+    alert('❌ Fehler beim Speichern')
+  }
 }
 </script>
 
@@ -89,16 +121,15 @@ function absenden() {
   background: var(--color-soft);
   padding: 1.5rem;
   border-radius: var(--card-radius);
+  margin-top: 2rem;
 }
-
-input, textarea {
+input, textarea, select {
   width: 100%;
   margin: 0.5rem 0;
   padding: 10px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
 }
-
 .zutat-row {
   display: flex;
   flex-wrap: wrap;
@@ -106,7 +137,6 @@ input, textarea {
   align-items: center;
   margin-bottom: 0.5rem;
 }
-
 button {
   padding: 10px 20px;
   background: var(--color-accent);
@@ -116,5 +146,10 @@ button {
   font-weight: bold;
   margin-top: 1rem;
   cursor: pointer;
+}
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 </style>

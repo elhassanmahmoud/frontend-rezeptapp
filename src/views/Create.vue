@@ -14,14 +14,13 @@ const rezeptStore = useRezeptStore()
 function rezeptSpeichern(rezept) {
   console.log('📦 Rezept empfangen vom Formular:', rezept)
 
-  // Standardwerte absichern
-  const rezeptMitFallbacks = {
+  const rezeptMitStrings = {
     ...rezept,
-    zutaten: rezept.zutaten || [],
-    naehrwerte: rezept.naehrwerte || {}
+    zutaten: typeof rezept.zutaten === 'string' ? rezept.zutaten : JSON.stringify(rezept.zutaten),
+    naehrwerte: typeof rezept.naehrwerte === 'string' ? rezept.naehrwerte : JSON.stringify(rezept.naehrwerte)
   }
 
-  rezeptStore.rezeptSpeichernBeimBackend(rezeptMitFallbacks)
+  rezeptStore.rezeptSpeichernBeimBackend(rezeptMitStrings)
 }
 </script>
 
