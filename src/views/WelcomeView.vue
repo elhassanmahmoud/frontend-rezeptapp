@@ -18,59 +18,36 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <style scoped>
-/* 🌅 Hintergrund-Verlauf ohne weißen Rand */
+/* VOLLE HÖHE & perfekte Zentrierung */
 .welcome-container {
-  height: calc(100vh - 140px); /* statt min-height: 100vh */
   display: flex;
-  align-items: flex-start; /* Nach oben rücken */
   justify-content: center;
-  background: radial-gradient(circle at center, #fff2dc, #fcefd6);
-  padding-top: 3rem;
-  padding-inline: 2rem;
-  overflow: hidden;
-  position: relative;
+  align-items: center;
+  height: calc(100vh - 140px); /* Platz für Header */
+  width: 100%;
+  background-color: transparent; /* Beige entfernt */
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
-/* ✨ Dekorative weiche Kreise */
-.welcome-container::before,
-.welcome-container::after {
-  content: "";
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: rgba(255, 200, 100, 0.15);
-  border-radius: 50%;
-  filter: blur(90px);
-  z-index: 0;
-}
-
-.welcome-container::before {
-  top: -120px;
-  left: -100px;
-}
-
-.welcome-container::after {
-  bottom: -100px;
-  right: -80px;
-}
-
-/* 💳 Willkommen-Karte */
+/* Die Karte in der Mitte */
 .welcome-card {
   background: #fff8ee;
   border-radius: 1.5rem;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid #f7e6c1;
-  padding: 3rem;
+  padding: 4rem 3rem;
   text-align: center;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
+  min-height: 400px; /* Höher gesetzt */
   z-index: 1;
 }
 
-/* ✍️ Text */
+/* Überschrift */
 h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.4rem;
+  margin-bottom: 1.2rem;
   font-weight: 700;
   color: #3a2f27;
 }
@@ -81,10 +58,11 @@ h1 {
 
 p {
   color: #5a4c43;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
 }
 
-/* 🧈 Buttons */
+/* Buttons */
 .buttons {
   display: flex;
   justify-content: center;

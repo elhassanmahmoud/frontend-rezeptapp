@@ -10,7 +10,7 @@
             <RouterLink to="/home">Home</RouterLink>
             <RouterLink to="/create">Rezept erstellen</RouterLink>
             <RouterLink to="/stats">Statistiken</RouterLink>
-            <RouterLink to="/weekplan">Wochenplan</RouterLink> <!-- ✅ NEU -->
+            <RouterLink to="/weekplan">Wochenplan</RouterLink>
           </template>
         </div>
 
@@ -42,18 +42,22 @@ const router = useRouter()
 
 function logout() {
   userStore.logout()
-  router.push('/') // Zur öffentlichen Startseite
+  router.push('/')
 }
 </script>
 
 <style>
 @import 'assets/base.css';
 
+/* Grundstruktur */
 #app {
   font-family: 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-/* Navbar Layout */
+/* Header */
 .navbar {
   display: flex;
   flex-direction: column;
@@ -64,7 +68,7 @@ function logout() {
   gap: 1rem;
 }
 
-/* Navigation Area */
+/* Navigation */
 .main-nav {
   display: flex;
   justify-content: space-between;
@@ -75,7 +79,7 @@ function logout() {
   max-width: 960px;
 }
 
-/* Logo Animation (Bounce) */
+/* Logo */
 .logo-bounce {
   width: 80px;
   height: 80px;
@@ -103,7 +107,7 @@ nav a.router-link-exact-active {
   color: var(--color-accent);
 }
 
-/* Logout Button */
+/* Logout */
 .logout-btn {
   background: transparent;
   border: none;
@@ -125,10 +129,10 @@ nav a.router-link-exact-active {
   }
 }
 
-/* Main Area */
+/* Hauptbereich */
 main {
+  flex-grow: 1;
   padding: 2rem;
-  max-width: 960px;
-  margin: auto;
+  width: 100%;
 }
 </style>
