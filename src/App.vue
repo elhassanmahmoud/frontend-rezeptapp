@@ -10,6 +10,7 @@
             <RouterLink to="/home">Home</RouterLink>
             <RouterLink to="/create">Rezept erstellen</RouterLink>
             <RouterLink to="/stats">Statistiken</RouterLink>
+            <RouterLink to="/weekplan">Wochenplan</RouterLink> <!-- ✅ NEU -->
           </template>
         </div>
 

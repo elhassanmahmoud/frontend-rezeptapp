@@ -6,7 +6,8 @@ import CreateView from '../views/Create.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import StatsView from '../views/StatsView.vue'
-import BearbeitenView from '../views/BearbeitenView.vue' // ✅ NEU
+import BearbeitenView from '../views/BearbeitenView.vue'
+import WeekPlanView from '../views/WeekPlanView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,9 +34,15 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/bearbeiten/:id',          // ✅ Bearbeitungsseite mit ID
+      path: '/bearbeiten/:id',
       name: 'bearbeiten',
       component: BearbeitenView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/weekplan',
+      name: 'weekplan',
+      component: WeekPlanView,
       meta: { requiresAuth: true }
     }
   ]

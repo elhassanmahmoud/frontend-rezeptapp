@@ -3,7 +3,7 @@
     <h2>Rezept bearbeiten</h2>
 
     <div v-if="ladeStatus === 'laden'">
-      🧊 Rezept wird geladen...
+       Rezept wird geladen...
     </div>
 
     <div v-else-if="ladeStatus === 'fehler'">

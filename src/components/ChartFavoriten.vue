@@ -16,7 +16,7 @@ import {
 ChartJS.register(Tooltip, Legend, ArcElement)
 
 const props = defineProps({
-  daten: Object
+  daten: Object // Erwartet { favoriten: [...], andere: [...] }
 })
 
 const chartData = {
@@ -24,14 +24,16 @@ const chartData = {
   datasets: [
     {
       label: 'Favoritenverteilung',
-      data: [props.daten.favoriten, props.daten.andere],
-      backgroundColor: ['#4ade80', '#ddd']
+      data: [props.daten.favoriten.length, props.daten.andere.length],
+      backgroundColor: ['#10b981', '#e5e7eb'], // grün + grau
+      borderWidth: 1
     }
   ]
 }
 
 const chartOptions = {
   responsive: true,
+  cutout: '60%',
   plugins: {
     legend: {
       position: 'bottom'
@@ -39,6 +41,16 @@ const chartOptions = {
     title: {
       display: true,
       text: 'Favoriten vs. Nicht-Favoriten'
+    },
+    tooltip: {
+      callbacks: {
+        label: function (tooltipItem) {
+          const index = tooltipItem.dataIndex
+          const liste = index === 0 ? props.daten.favoriten : props.daten.andere
+          const namen = liste.map(r => `• ${r.name}`)
+          return [`Rezepte: ${liste.length}`, ...namen]
+        }
+      }
     }
   }
 }

@@ -1,37 +1,70 @@
 <template>
   <section class="stats">
-    <h1> Koch-Statistiken</h1>
+    <h1>Rezept-Statistiken</h1>
 
-    <ul class="stat-list">
-      <li> Anzahl aller Rezepte: {{ alle.length }}</li>
-      <li> Favoriten: {{ favoriten.length }}</li>
-      <li> Kategorien:
-        <ul>
-          <li v-for="(anzahl, kat) in kategorien" :key="kat">
-            {{ kat }}: {{ anzahl }}
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <!-- Rezeptauswahl -->
+    <div class="auswahl">
+      <label for="rezeptSelect">Rezept auswählen:</label>
+      <select id="rezeptSelect" v-model="ausgewaehltName">
+        <option disabled value="">-- Bitte wählen --</option>
+        <option v-for="r in alle" :key="r.id" :value="r.name">
+          {{ r.name }}
+        </option>
+      </select>
+    </div>
 
-    <!-- Diagramme -->
+    <!-- Nährwerte (oben!) -->
+    <div class="summary-box" v-if="naehrwerte">
+      <h2>Nährwerte: {{ ausgewaehltName }}</h2>
+      <ul>
+        <li><strong>Kalorien:</strong> {{ naehrwerte.kcal }} kcal</li>
+        <li><strong>Eiweiß:</strong> {{ naehrwerte.eiweiss }} g</li>
+        <li><strong>Fett:</strong> {{ naehrwerte.fett }} g</li>
+        <li><strong>Kohlenhydrate:</strong> {{ naehrwerte.kohlenhydrate }} g</li>
+      </ul>
+    </div>
+
+    <!-- Makronährstoff-Verteilung -->
+    <ChartMakronaehrstoffe v-if="naehrwerte" :daten="naehrwerte" />
+
+    <!-- Allgemeine Charts -->
     <ChartKategorien :daten="kategorien" />
     <ChartFavoriten :daten="favoritenDaten" />
-    <ChartTageszeit :daten="tageszeitDaten" />
+    <ChartKalorien :daten="kalorienMitNamen" />
   </section>
 </template>
 
 <script setup>
 import { useRezeptStore } from '@/stores/rezepte'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+
 import ChartKategorien from '@/components/ChartKategorien.vue'
 import ChartFavoriten from '@/components/ChartFavoriten.vue'
-import ChartTageszeit from '@/components/ChartTageszeit.vue' // ✅ NEU
+import ChartMakronaehrstoffe from '@/components/ChartMakronaehrstoffe.vue'
+import ChartKalorien from '@/components/ChartKalorien.vue'
 
 const rezeptStore = useRezeptStore()
 const alle = computed(() => rezeptStore.rezepte)
 const favoriten = computed(() => alle.value.filter(r => r.favorit))
+const nichtFavoriten = computed(() => alle.value.filter(r => !r.favorit))
+const ausgewaehltName = ref('')
 
+const ausgewaehltesRezept = computed(() =>
+  alle.value.find(r => r.name === ausgewaehltName.value)
+)
+
+const naehrwerte = computed(() => {
+  const r = ausgewaehltesRezept.value
+  if (!r || !r.naehrwerte) return null
+  return {
+    kcal: r.naehrwerte.kalorien || 0,
+    eiweiss: r.naehrwerte.eiweiss || 0,
+    fett: r.naehrwerte.fett || 0,
+    kohlenhydrate: r.naehrwerte.kohlenhydrate || 0
+  }
+})
+
+// Kategorieübersicht
 const kategorien = computed(() => {
   const stats = {}
   for (const rezept of alle.value) {
@@ -41,34 +74,21 @@ const kategorien = computed(() => {
   return stats
 })
 
-const favoritenDaten = computed(() => {
-  return {
-    favoriten: favoriten.value.length,
-    andere: alle.value.length - favoriten.value.length
-  }
-})
+//  Favoriten mit Namen für Tooltip in ChartFavoriten.vue
+const favoritenDaten = computed(() => ({
+  favoriten: favoriten.value.map(r => ({ name: r.name })),
+  andere: nichtFavoriten.value.map(r => ({ name: r.name }))
+}))
 
-// ✅ Tageszeit-Daten aus Kategorie ableiten
-const tageszeitDaten = computed(() => {
-  const stats = {
-    Frühstück: 0,
-    Mittagessen: 0,
-    Abendessen: 0,
-    Dessert: 0,
-    Unbekannt: 0
-  }
-
-  for (const rezept of alle.value) {
-    const k = rezept.kategorie?.toLowerCase() || ''
-    if (k.includes('frühstück')) stats.Frühstück++
-    else if (k.includes('mittag')) stats.Mittagessen++
-    else if (k.includes('abend')) stats.Abendessen++
-    else if (k.includes('dessert')) stats.Dessert++
-    else stats.Unbekannt++
-  }
-
-  return stats
-})
+// ⚠ Für ChartKalorien: Liste { kcal, name }
+const kalorienMitNamen = computed(() =>
+  alle.value
+    .filter(r => r.naehrwerte && typeof r.naehrwerte.kalorien === 'number')
+    .map(r => ({
+      name: r.name,
+      kcal: r.naehrwerte.kalorien
+    }))
+)
 </script>
 
 <style scoped>
@@ -81,18 +101,37 @@ const tageszeitDaten = computed(() => {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
-.stat-list {
-  list-style: none;
-  padding-left: 0;
+.auswahl {
+  margin-bottom: 1.5rem;
 }
 
-.stat-list li {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-}
-
-.stat-list ul {
+.auswahl select {
   margin-top: 0.5rem;
-  padding-left: 1.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.summary-box {
+  margin: 1rem 0 2rem;
+  padding: 1rem 1.5rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.summary-box h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.summary-box ul {
+  padding-left: 1rem;
+}
+
+.summary-box li {
+  margin-bottom: 0.3rem;
 }
 </style>

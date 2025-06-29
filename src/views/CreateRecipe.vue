@@ -1,6 +1,6 @@
 <template>
   <section class="create-recipe">
-    <h1>📥 Neues Rezept erstellen</h1>
+    <h1> Neues Rezept erstellen</h1>
     <form @submit.prevent="rezeptSpeichern">
       <input v-model="name" type="text" placeholder="Name" required />
       <input v-model="kategorie" type="text" placeholder="Kategorie" required />

@@ -1,6 +1,6 @@
 <template>
   <section class="create-recipe">
-    <h1>📥 Neues Rezept erstellen</h1>
+    <h1> </h1>
     <RezeptFormular @neues-rezept="rezeptSpeichern" />
   </section>
 </template>
@@ -12,7 +12,7 @@ import { useRezeptStore } from '@/stores/rezepte'
 const rezeptStore = useRezeptStore()
 
 function rezeptSpeichern(rezept) {
-  console.log('📦 Rezept empfangen vom Formular:', rezept)
+  console.log('Rezept empfangen vom Formular:', rezept)
 
   const rezeptMitStrings = {
     ...rezept,

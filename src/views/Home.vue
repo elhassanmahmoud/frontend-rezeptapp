@@ -6,7 +6,7 @@
     <div class="filter-container">
       <input
         v-model="suche"
-        placeholder="🔍 Suche nach Namen..."
+        placeholder="Suche nach Rezeptname..."
         class="search"
       />
       <select v-model="kategorieFilter" class="filter-dropdown">
@@ -35,7 +35,14 @@ const kategorien = [
   'Italienisch',
   'Asiatisch',
   'Orientalisch',
-  'Vegetarisch'
+  'Vegetarisch',
+  'Mexikanisch',
+  'Indisch',
+  'Französisch',
+  'Vegan',
+  'Glutenfrei',
+  'Suppe',
+  'Dessert'
 ]
 
 const gefilterteRezepte = computed(() => {

@@ -2,16 +2,16 @@
   <div class="rezeptliste">
     <div class="favoriten-toggle" v-if="userStore.user">
       <button @click="zeigeNurFavoriten = !zeigeNurFavoriten">
-        {{ zeigeNurFavoriten ? '🔄 Alle anzeigen' : '❤️ Nur Favoriten' }}
+        {{ zeigeNurFavoriten ? 'Alle anzeigen' : 'Nur Favoriten' }}
       </button>
     </div>
 
     <div class="export-button" v-if="userStore.user">
-      <button @click="exportiereAlsPDF">📄 Als PDF exportieren</button>
+      <button @click="exportiereAlsPDF"> Als PDF exportieren</button>
     </div>
 
     <p>Anzahl gefilterter Rezepte: {{ angezeigteRezepte.length }}</p>
-    <p v-if="angezeigteRezepte.length === 0">🚫 Keine passenden Rezepte gefunden.</p>
+    <p v-if="angezeigteRezepte.length === 0">Keine passenden Rezepte gefunden.</p>
 
     <div v-for="r in angezeigteRezepte" :key="r.id" class="card">
       <img :src="r.bild ? `/assets/${r.bild}` : '/assets/keinbild.jpg'" :alt="r.name" />
@@ -22,12 +22,12 @@
 
       <ul class="zutaten" v-if="Array.isArray(r.zutaten)">
         <li v-for="zutat in r.zutaten" :key="zutat.name">
-          🧂 {{ zutat.menge }} {{ zutat.name }}
+           {{ zutat.menge }} {{ zutat.name }}
         </li>
       </ul>
 
       <div class="naehrwerte" v-if="r.naehrwerte && typeof r.naehrwerte === 'object'">
-        📦 Kalorien: {{ r.naehrwerte.kalorien || '?' }} kcal |
+        Kalorien: {{ r.naehrwerte.kalorien || '?' }} kcal |
         Eiweiß: {{ r.naehrwerte.eiweiss || '?' }} g |
         Fett: {{ r.naehrwerte.fett || '?' }} g |
         Kohlenhydrate: {{ r.naehrwerte.kohlenhydrate || '?' }} g
@@ -35,10 +35,10 @@
 
       <div class="button-row" v-if="userStore.user">
         <button @click="favoritWechseln(r.id)" :class="{ aktiv: r.favorit }">
-          {{ r.favorit ? '💖 Favorit' : '🤍 Merken' }}
+          {{ r.favorit ? 'Favorit' : 'Merken' }}
         </button>
-        <button @click="bearbeiten(r)">✏️ Bearbeiten</button>
-        <button @click="loeschen(r.id)">🗑️ Löschen</button>
+        <button @click="bearbeiten(r)">️ Bearbeiten</button>
+        <button @click="loeschen(r.id)"> Löschen</button>
       </div>
     </div>
 
@@ -95,10 +95,10 @@ async function loeschen(id) {
       })
       if (!res.ok) throw new Error('Fehler beim Löschen')
       rezeptStore.rezepte = rezeptStore.rezepte.filter(r => r.id !== id)
-      alert('✅ Rezept gelöscht')
+      alert('Rezept gelöscht')
     } catch (err) {
       console.error('Fehler beim Löschen:', err)
-      alert('❌ Fehler beim Löschen')
+      alert('Fehler beim Löschen')
     }
   }
 }

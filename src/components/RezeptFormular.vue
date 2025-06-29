@@ -9,17 +9,21 @@
       <option>Asiatisch</option>
       <option>Orientalisch</option>
       <option>Vegetarisch</option>
+      <option>Mexikanisch</option>
+      <option>Indisch</option>
+      <option>Französisch</option>
+      <option>Vegan</option>
+      <option>Glutenfrei</option>
+      <option>Suppe</option>
+      <option>Dessert</option>
     </select>
     <input v-model="form.bild" placeholder="Bilddateiname (z. B. pizza.jpg)" />
-    <textarea v-model="form.beschreibung" placeholder="Beschreibung" required></textarea>
+    <textarea v-model="form.beschreibung" placeholder="Beschreibung + Kochanleitung" required></textarea>
 
     <h4>Zutaten:</h4>
     <div v-for="(z, index) in form.zutaten" :key="index" class="zutat-row">
-      <input v-model="z.menge" placeholder="Menge" />
+      <input v-model="z.menge" placeholder="Menge (g/ml)" />
       <input v-model="z.name" placeholder="Zutat" />
-      <input v-model="z.kategorie" placeholder="Zutat-Kategorie" />
-      <input v-model="z.symbol" placeholder="Symbol (🍅)" />
-      <input v-model="z.kochanleitung" placeholder="Kochanleitung" />
       <button type="button" @click="form.zutaten.splice(index, 1)">❌</button>
     </div>
     <button type="button" @click="neueZutat()">➕ Zutat</button>
@@ -31,7 +35,7 @@
     <input type="number" v-model.number="form.naehrwerte.kohlenhydrate" placeholder="Kohlenhydrate (g)" />
 
     <div class="form-buttons">
-      <button type="submit">✅ Speichern</button>
+      <button type="submit">Speichern</button>
       <button type="button" @click="$emit('abbrechen')">❌ Abbrechen</button>
     </div>
   </form>
@@ -102,11 +106,11 @@ async function absenden() {
     if (istBearbeiten.value) {
       await axios.put(`http://localhost:8080/rezepte/${rezept.id}`, rezept)
       rezeptStore.rezepte = rezeptStore.rezepte.map(r => r.id === rezept.id ? rezept : r)
-      alert('✅ Rezept aktualisiert!')
+      alert('Rezept aktualisiert!')
     } else {
       const res = await axios.post('http://localhost:8080/rezepte', rezept)
       rezeptStore.rezepte.push(res.data)
-      alert('✅ Rezept erstellt!')
+      alert('Rezept erstellt!')
     }
     emit('gespeichert')
   } catch (error) {
